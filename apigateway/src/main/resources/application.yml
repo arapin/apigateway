@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: apigateway
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: reactive
+
+server:
+  port: 8000
+
+
+---
+## local 설정
+spring:
+  config:
+    activate:
+      on-profile: local
+  cloud:
+    gateway:
+      # 먼저 선언한 순서대로 필터가 적용됨 route 1 -> route 2
+      routes:
+        # route 1, route의 id는 sample-internal
+        - id: finance
+          uri: http://localhost:8080
+          predicates:
+            - Path=/finance/**
+          filters:
+            - RewritePath=/finance/(?<segment>.*), /finance-api/v2/$1
+
+---
+## dev 설정
+spring:
+  config:
+    activate:
+      on-profile: dev
+  cloud:
+    gateway:
+      # 먼저 선언한 순서대로 필터가 적용됨 route 1 -> route 2
+      routes:
+        # route 1, route의 id는 sample-internal
+        - id: finance
+          uri: http://localhost:8080
+          predicates:
+            - Path=/finance/**
+          filters:
+            - RewritePath=/finance/(?<segment>.*), /finance-api/v2/$1
+
+---
+## prod 설정
+spring:
+  config:
+    activate:
+      on-profile: prod
+  cloud:
+    gateway:
+      # 먼저 선언한 순서대로 필터가 적용됨 route 1 -> route 2
+      routes:
+        # route 1, route의 id는 sample-internal
+        - id: finance
+          uri: http://localhost:8080
+          predicates:
+            - Path=/finance/**
+          filters:
+            - RewritePath=/finance/(?<segment>.*), /finance-api/v2/$1
+
